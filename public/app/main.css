@@ -1,0 +1,65 @@
+.creation-modal {
+  min-width: 650px;
+  overflow: hidden;
+}
+
+.headshot {
+  max-width: 300px;
+}
+
+.dev-card {
+  max-width: 450px;
+}
+
+.event-card {
+  min-width:600px;
+}
+
+.event-image {
+  max-width:200px;
+}
+
+.tilegrid {
+  overflow: visible;
+}
+
+fieldset {
+  border: 1px groove;
+}
+
+.footer {
+  position: fixed;
+  left:0;
+  bottom:0;
+  width:100%;
+  background-color: #9e9e9e;
+  max-height: 36px;
+}
+
+img {
+  border-radius:4px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #e91e63;
+  overflow:hidden;
+}
+body {
+  position:relative;
+}
+
+.small-text {
+  font-size:10px;
+}
+
+.logo {
+  max-height:100px;
+  max-width:100px;
+  border-radius:4px;
+  margin:8px;
+  background: #FFF;
+  padding:5px;
+}
+

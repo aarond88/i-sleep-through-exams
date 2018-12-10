@@ -1,0 +1,54 @@
+<md-dialog aria-label="Create an Event" class="md-block creation-modal">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Create an Event</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="/public/assets/clear.svg"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-input-container class="md-block" flex-gt-sm>
+      <label>Title</label>
+      <input ng-model="event.title">
+    </md-input-container>
+    <md-input-container class="md-block" flex-gt-sm>
+      <label>Location</label>
+      <input ng-model="event.location">
+    </md-input-container>
+
+
+    <!-- TODO: racewright write validation logic -->
+    <div layout="row" class="md-block">
+
+      <md-input-container>
+        <label>Beginning</label>
+        <input ng-model="event.time_beginning">
+      </md-input-container>
+      <md-input-container>
+        <label>Ending</label>
+        <input ng-model="event.time_ending">
+      </md-input-container>
+          <md-input-container>
+        <label>Enter date</label>
+        <md-datepicker ng-model="event.date"></md-datepicker>
+      </md-input-container>
+    </div>
+
+  <fieldset>
+    <legend><i>preview</i></legend>
+    <div layout="row" layout-align="center center">
+
+      <event-card dtx="event"></event-card>
+    </div>
+  </fieldset>
+
+  <md-dialog-actions layout="row">
+    <span flex></span>
+    <md-button ng-click="answer('not useful')">Cancel</md-button>
+    <md-button ng-click="answer('useful')" class="md-primary">Create</md-button>
+  </md-dialog-actions>
+
+</md-dialog>
