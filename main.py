@@ -77,15 +77,10 @@ class MainPageHandler(webapp.RequestHandler):
   def get(self, *args):
 
     print self.request
-    # TODO remove before submission. 5 lines of Aarons Testing code. Replace value of errormessage in template_values to ''
-    #createEvent(None)
-    #deleteEvent(None)
-    #addAttendee(None)
-    #addDonation(None)
-    #eventDetails = getEventDetails()
+
     countrydata = getCountryData()
     
-    template_values = {'title': 'Strong Feather Events', 'errormessage': '', 'countrydata': countrydata}
+    template_values = {'title': 'Weather Status', 'errormessage': '', 'countrydata': countrydata}
     template = JINJA_ENVIRONMENT.get_template('index.html')
 
     self.response.write(template.render(template_values))
@@ -120,23 +115,6 @@ class DonationAPIHandler(webapp.RequestHandler):
 
 routes = [
   webapp.Route(r'/', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/about', handler=AboutPageHandler, name="about"),
-  webapp.Route(r'/events/new', handler=CreatePageHandler, name="home"),
-  webapp.Route(r'/events/0', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/1', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/2', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/3', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/4', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/5', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/6', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/7', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/8', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/9', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/10', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events/', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/events', handler=MainPageHandler, name="home"),
-  webapp.Route(r'/api/events', handler=EventAPIHandler, name="apievents"),
-  webapp.Route(r'/api/donations', handler=DonationAPIHandler, name="apidonations")
 ]
 
 app = webapp.WSGIApplication(
@@ -149,58 +127,3 @@ app = webapp.WSGIApplication(
 def getCountryData():
 	allCountries = executeQuery("SELECT country, countryname FROM countrycodes ORDER BY countryname ASC;") 
 	return allCountries
-
-# Create new event
-def createEvent(eventObject):
-	# TODO: Remove hardcode
-	# @Race: This is the object format
-	eventObject = {
-            'title' : "Party at Aarons",
-            'location' : "Races house",
-            'date' : "2019-01-01 00:00:01",
-            'duration' : 120,
-            'imageURL' : "https://i.imgur.com/n3PQl9u.png"
-            }
-	if "duration" not in eventObject:
-		newEvent['duration'] = ""
-	response = executeQuery("INSERT INTO events (eventname, location, eventtime, duration, imagelink) VALUES (\'" + eventObject["title"] + "\', \'" + eventObject["location"] + "\', \'" + eventObject["date"] + "\', \'" + str(eventObject["duration"]) + "\', \'" + eventObject["imageURL"] + "\');")
-	return response
-	
-# Delete an event by eventid
-def deleteEvent(eventid):
-	#TODO Aaron Remove hardcode
-	if eventid is None:
-		eventid = 60
-	return executeQuery("DELETE FROM events WHERE eventid = " + str(eventid) + ";")
-
-# Add attendee to event
-def addAttendee(attendeeObject):
-	# @Race: This is the object format.
-	# TODO Aaron remove hardcode
-	attendeeObject = {
-		'eventid' : 60,
-		'useremail' : "aaron.dsouza@yale.edu",
-		'status' : "Yes"
-		}
-	# End of hardcode
-	response = executeQuery("INSERT INTO attendees (eventid, useremail, status, registertime) VALUES (" + str(attendeeObject['eventid']) + ", \'" + attendeeObject['useremail'] + "\', \'" + attendeeObject['status'] + "\', \'" + str(datetime.now()) + "\');")
-	return response
-	
-
-# Add donation to event
-def addDonation(donationObject):
-	# @Race: This is the object format.
-	# TODO Aaron remove hardcode
-	donationObject = {
-		'eventid' : 60,
-		'useremail' : "aaron.dsouza@yale.edu",
-		'amount' : 10.1
-		}
-	# End of hardcode
-	response = executeQuery("INSERT INTO donations (eventid, useremail, amount) VALUES (" + str(donationObject['eventid']) + ", \'" + donationObject['useremail'] + "\', " + str(donationObject['amount']) + ");")
-	return response
-
-# DB queries to insert data into tables:
-# INSERT INTO events (eventname, location, eventtime, duration, imagelink) VALUES ('Party at Aarons', 'Races house', '2019-01-01 00:00:01', '120', 'https://i.imgur.com/n3PQl9u.png');
-# INSERT INTO attendees (eventid, useremail, status, registertime) VALUES (60, 'aaron.dsouza@yale.edu', 'Yes', '2018-12-09 22:36:16.478049');
-# INSERT INTO donations (eventid, useremail, amount) VALUES (60, 'aaron.dsouza@yale.edu', 10.1);

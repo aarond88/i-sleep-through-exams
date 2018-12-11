@@ -1,16 +1,7 @@
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <title>Weather status</title>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-130211160-1', 'auto');
-      ga('send', 'pageview');
-    </script>
+    <title>Weather Status</title>
 
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -44,15 +35,15 @@
     <script src="/public/app/main.js"></script>
   </head>
   <header>
-    <md-toolbar class="md-tall">
+    <md-toolbar class="md-medium-tall">
       <div layout="row" layout-align="begin end">
         <img src="/public/assets/logo.png" class="logo" id="logo" />
         <div style="vertical-align:middle; height: 65px; margin-left:10px">
-      		<h2 style="vertical-align:middle">Weather status</h2>
+      		<h2 style="vertical-align:middle">Weather Status</h2>
       	</div>
       </div>
       <div>
-        <p>{{error_message}}</p>
+        <!--<p>{{error_message}}</p>-->
         <!--<p id="demo">Test text</p>-->
       </div>
     </md-toolbar>
@@ -63,7 +54,8 @@
     <div ng-view></div>
 
 
-	<h2 id="error-message" style="text-align: center;"></h2>
+	<h4 id="error-message" style="text-align: center;"></h4>
+	<p></p>
 	<h2 style="text-align: center;" id="mapholder"><img src="/public/assets/blank.png" alt="" width="500" height="150"/></h2>
 	<h2 id="weather-title" style="text-align: center;">Current weather in New Haven, US</h2>
 	<table style="height: 140px; margin-left: auto; margin-right: auto;" width="450">
@@ -104,14 +96,14 @@
 	      <tr>
 	         <td style="width: 150px; text-align: left;">Zip Code: </td>
 	         <td style="width: 350px;">
-	         	<input id="zip-code" type="number " placeholder="06511" autofocus size="7" style="padding-left: 5px">
-	         	<a href="https://worldpostalcode.com/search/" style="margin-left: 15px">Don't know the ZIP code?</a>
+	         	<input id="zip-code" type="number" placeholder="06511" autofocus size="7" style="padding-left: 5px; width:6em">
+	         	<a href="https://worldpostalcode.com/search/" style="margin-left: 10px" target="_blank">Don't know the ZIP code?</a>
 	         </td>
 	      </tr>
 	      <tr>
 	         <td style="width: 150px; text-align: left;">&nbsp;</td>
 	         <td style="width: 350px;">
-	         	<button id="check-weather" type="button">Check weather</button>
+	         	<button id="check-weather" type="button" onclick="getWeatherForZip()">Check weather</button>
 	         </td>
 	      </tr>
 	   </tbody>
@@ -131,6 +123,9 @@
 	   var mainHumidity = document.getElementById("main-humidity");
 	   var windSpeed = document.getElementById("wind-speed");
 	   var mapHolder = document.getElementById("mapholder");
+	   var countryCode = document.getElementById("country");
+	   var zipCode = document.getElementById("zip-code");
+			
 	   
 	   function getLocation() {
 	     if (navigator.geolocation) {
@@ -141,42 +136,67 @@
 	   }
 	   
 	   function showPosition(position) {
-	   	var jsonURL = "";
-	   	if (position === null || position == undefined){
-	   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.308151&lon=-72.928162&appid=edd1482d5f76f72226714348ab519fc0";
-	   	} else {
-	   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0";
-	   	}
-	     $.getJSON(jsonURL, function(result){
-            //x.innerHTML = result + " " + position.coords.latitude;
-            weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
-        	mainTemp.innerHTML = Math.round((result['main']['temp'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
-        	weatherDesc.innerHTML = result['weather']['0']['description'];
-        	MainMaxMin.innerHTML = "High-Low: " + Math.round((result['main']['temp_max'] - 273.15) * 9/5 + 32).toString() + "&#176;-" + Math.round((result['main']['temp_min'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
-        	mainHumidity.innerHTML = "Humidity: " + result['main']['humidity'].toString() + " %";
-        	windSpeed.innerHTML =  "Wind: " + Math.round(result['wind']['speed']* 2.237).toString() + " mph";
-        	
-        	var latlon = position.coords.latitude + "," + position.coords.longitude;
-        	  var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&markers=color:blue%7Clabel:o%7C"+latlon+"&zoom=12&size=500x150&sensor=false&key=AIzaSyBE_-cYkgzx8mjZwqDszgYRqHpXP9OTDM4";
+		   	var jsonURL = "";
+		   	if (position === null || position == undefined){
+		   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.308151&lon=-72.928162&appid=edd1482d5f76f72226714348ab519fc0";
+		   	} else {
+		   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0";
+		   	}
+	   		getWeatherInfo(jsonURL, position);
+   		}
 
-  			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='150'>";
-        	
+		function getWeatherForZip() {
+			
+	   		var countryCodeValue = countryCode.options[countryCode.selectedIndex].value;
+			var zipCodeValue = zipCode.value;
+			if (zipCodeValue==="")
+				alert("Please enter a ZIP code.");
+			else
+				getWeatherInfo("https://api.openweathermap.org/data/2.5/weather?zip=" + zipCodeValue + ","+ countryCodeValue + "&appid=edd1482d5f76f72226714348ab519fc0", null);
+		}
+		
+		function getWeatherInfo(jsonURL, position) {
+	     $.getJSON(jsonURL, function(result){
+	            //x.innerHTML = result + " " + position.coords.latitude;
+					weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
+		        	mainTemp.innerHTML = Math.round((result['main']['temp'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
+		        	weatherDesc.innerHTML = result['weather']['0']['description'];
+		        	MainMaxMin.innerHTML = "High-Low: " + Math.round((result['main']['temp_max'] - 273.15) * 9/5 + 32).toString() + "&#176;-" + Math.round((result['main']['temp_min'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
+		        	mainHumidity.innerHTML = "Humidity: " + result['main']['humidity'].toString() + " %";
+		        	windSpeed.innerHTML =  "Wind: " + Math.round(result['wind']['speed']* 2.237).toString() + " mph";
+		        	
+		        	if(position===null)
+		        		getMapImage(result['coord']['lat'], result['coord']['lon']);
+		        	else
+		        		getMapImage(position.coords.latitude, position.coords.longitude);					
+        	})
+        	.fail(function() {
+        		alert("ZIP code not found. Please try a diffrent ZIP code.");
         	});	     
 		}
+	   
+		function getMapImage(lat, lon) {	           	
+        	var latlon = lat + "," + lon;
+        	var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&markers=color:blue%7Clabel:o%7C"+latlon+"&zoom=12&size=500x150&sensor=false&key=AIzaSyBE_-cYkgzx8mjZwqDszgYRqHpXP9OTDM4";
+
+  			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='150'>";
+   		}
+
 	   
 	   function showError(error) {
 		  switch(error.code) {
 		    case error.PERMISSION_DENIED:
-		      errorMessage.innerHTML = "User denied the request for Geolocation. Showing info for default location.";
+		      errorMessage.innerHTML = "User denied the request for Geolocation. Displaying info for default location.";
+		      showPosition(null);
 		      break;
 		    case error.POSITION_UNAVAILABLE:
-		      errorMessage.innerHTML = "Location information is unavailable. Showing info for default location.";
+		      errorMessage.innerHTML = "Location information is unavailable. Displaying info for default location.";
 		      break;
 		    case error.TIMEOUT:
-		      errorMessage.innerHTML = "The request to get user location timed out. Showing info for default location.";
+		      errorMessage.innerHTML = "The request to get user location timed out. Displaying info for default location.";
 		      break;
 		    case error.UNKNOWN_ERROR:
-		      errorMessage.innerHTML = "An unknown error occurred. Showing info for default location.";
+		      errorMessage.innerHTML = "An unknown location error occurred. Displaying info for default location.";
 		      break;
   			}	
    		}
