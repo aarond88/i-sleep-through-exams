@@ -69,12 +69,12 @@
 	      <tr style="height: 7.85001px;">
 	         <td style="width: 213.6px; height: 7.85001px;">
 	            <h1><span id="main-temp" style="color: #333333;">25* F</span></h1>
-	            <p><span id="weather-desc" temp" style="color: #333333;">Clear</span></p>
+	            <p><strong><span id="weather-desc" temp" style="color: #333333;">Clear</span></strong></p>
 	         </td>
 	         <td style="width: 217.6px; height: 7.85001px;">
-	            <p><span id="main-max-min" style="color: #333333;">High-Low : 27*-21* F&nbsp;</span></p>
-	            <p><span id="main-humidity" style="color: #333333;">Humidity: 50%</span></p>
-	            <p><span id="wind-speed" style="color: #333333;">Wind: 5mph</span></p>
+	            <p><strong><span id="main-max-min" style="color: #333333;">High-Low: 27*-21* F&nbsp;</span></strong></p>
+	            <p><strong><span id="main-humidity" style="color: #333333;">Humidity: 50%</span></strong></p>
+	            <p><strong><span id="wind-speed" style="color: #333333;">Wind: 5mph</span></strong></p>
 	         </td>
 	      </tr>
 	   </tbody>
@@ -105,12 +105,11 @@
 	     $.getJSON("https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0", function(result){
             x.innerHTML = result + " " + position.coords.latitude;
         	weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
-        	mainTemp.innerHTML = Math.round(((result['main']['temp'] - 273.15) * 9/5 + 32)).toString() + "&#176; F"
-        	weatherDesc.innerHTML = "";
-        	MainMaxMin.innerHTML = "";
-        	mainHumidity.innerHTML = "";
-        	windSpeed.innerHTML = "";
-        	
+        	mainTemp.innerHTML = Math.round((result['main']['temp'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
+        	weatherDesc.innerHTML = result['weather']['0']['description'];
+        	MainMaxMin.innerHTML = "High-Low: " + Math.round((result['main']['temp_max'] - 273.15) * 9/5 + 32).toString() + "&#176;-" + Math.round((result['main']['temp_min'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
+        	mainHumidity.innerHTML = "Humidity: " + result['main']['humidity'].toString() + " %";
+        	windSpeed.innerHTML =  "Wind: " + Math.round(result['wind']['speed']* 2.237).toString() + " mph";
         });	     
 	     //x.innerHTML = "Latitude: " + position.coords.latitude + 
 	     //"<br>Longitude: " + position.coords.longitude;
