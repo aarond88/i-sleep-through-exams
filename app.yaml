@@ -10,7 +10,7 @@ env_variables:
     CLOUDSQL_USER: root
     CLOUDSQL_PASSWORD: 1
     CLOUDSQL_DATABASE_NAME: mysqldb
-    CLOUDSQL_CONNECTION_NAME: mgt660-strongfeather:us-east1:mysql
+    CLOUDSQL_CONNECTION_NAME: i-sleep-through-exams:us-east1:mysqlinstance
 
 #beta_settings:
 #    cloud_sql_instances: mgt660-strongfeather:northamerica-northeast1:mgt660-strongfeather

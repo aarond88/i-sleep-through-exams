@@ -1,7 +1,7 @@
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <title>Strong Feather Events</title>
+    <title>Weather status</title>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -19,6 +19,7 @@
 
       gtag('config', 'UA-130211160-1');
     </script>
+
 
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/public/app/main.css">
@@ -45,30 +46,63 @@
   <header>
     <md-toolbar class="md-tall">
       <div layout="row" layout-align="begin end">
-        <img src="/public/assets/feather.png" class="logo" id="logo" />
-        <h2>Strong Feather Events</h2>
+        <img src="/public/assets/logo.png" class="logo" id="logo" />
+        <h2 style="vertical-align:middle">Weather status</h2>
       </div>
       <div>
         <p>{{errormessage}}</p>
+        <p id="demo">Test text</p>
       </div>
     </md-toolbar>
 
   </header>
 
-  <body ng-app="EventApp" ng-controller="MainCtrl as ctrl" ng-cloak>
+  <body ng-app="EventApp" ng-controller="MainCtrl as ctrl" ng-cloak background="/public/assets/bgimage.png">
     <div ng-view></div>
 
-    <!--TODO: racewright. Make grid responsive. -->
-    <div class="tilegrid">
-      <md-grid-list md-cols="1" md-cols-gt-md="2" md-cols-gt-lg="3" md-row-height="1:1" md-gutter="12px">
-        <md-grid-tile ng-repeat="event in ctrl.events track by $index">
-          <event-card dtx="event" msg="ctrl.messaging" id="event_[[ $index ]]"></event-card>
-        </md-grid-tile>
-      </md-grid-list>
-    </div>
+
+	<h2 style="text-align: center;">&nbsp;</h2>
+	<h2 style="text-align: center;">&nbsp;</h2>
+	<h2 style="text-align: center;">Current weather in &lt;New Haven&gt;, US</h2>
+	<table style="height: 177px; margin-left: auto; margin-right: auto;" width="446">
+	   <tbody>
+	      <tr style="height: 7.85001px;">
+	         <td style="width: 213.6px; height: 7.85001px;">
+	            <h1><span style="color: #333333;">25* F</span></h1>
+	            <p><span style="color: #333333;">Clear</span></p>
+	         </td>
+	         <td style="width: 217.6px; height: 7.85001px;">
+	            <p><span style="color: #333333;">High-Low : 27*-21* F&nbsp;</span></p>
+	            <p><span style="color: #333333;">Humidity: 50%</span></p>
+	            <p><span style="color: #333333;">Wind: 5mph</span></p>
+	         </td>
+	      </tr>
+	   </tbody>
+	</table>
 
   </body>
+  
+  
+	<script>
+	   var x = document.getElementById("demo");
+	   
+	   function getLocation() {
+	     if (navigator.geolocation) {
+	       navigator.geolocation.getCurrentPosition(showPosition);
+	     } else { 
+	       x.innerHTML = "Geolocation is not supported by this browser.";
+	     }
+	   }
+	   
+	   function showPosition(position) {
+	     x.innerHTML = "Latitude: " + position.coords.latitude + 
+	     "<br>Longitude: " + position.coords.longitude;
+	   }
+	   
+	   window.onload = function() {
+	     getLocation();
+	   };
+	</script>
   <footer>
-    <a href="/about">About</a>
   </footer>
 </html>
