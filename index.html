@@ -51,7 +51,7 @@
       </div>
       <div>
         <p>{{errormessage}}</p>
-        <p id="demo">Test text</p>
+        <!--<p id="demo">Test text</p>-->
       </div>
     </md-toolbar>
 
@@ -81,13 +81,15 @@
 	      </tr>
 	   </tbody>
 	</table>
+	<p style="text-align: center;">Need weather status for another location?</p>
+
 
   </body>
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 	<script>
-	   var x = document.getElementById("demo");
+	   //var x = document.getElementById("demo");
 	   var errorMessage = document.getElementById("error-message");
 	   var weatherTitle = document.getElementById("weather-title");
 	   var mainTemp = document.getElementById("main-temp");
@@ -101,7 +103,7 @@
 	     if (navigator.geolocation) {
 	       navigator.geolocation.getCurrentPosition(showPosition, showError);
 	     } else { 
-	       x.innerHTML = "Geolocation is not supported by this browser.";
+	       //x.innerHTML = "Geolocation is not supported by this browser.";
 	     }
 	   }
 	   
@@ -113,7 +115,7 @@
 	   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0";
 	   	}
 	     $.getJSON(jsonURL, function(result){
-            x.innerHTML = result + " " + position.coords.latitude;
+            //x.innerHTML = result + " " + position.coords.latitude;
             weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
         	mainTemp.innerHTML = Math.round((result['main']['temp'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
         	weatherDesc.innerHTML = result['weather']['0']['description'];
@@ -127,8 +129,9 @@
   			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='200'>";
         	
         });	     
-	     //x.innerHTML = "Latitude: " + position.coords.latitude + 
-	     //"<br>Longitude: " + position.coords.longitude;
+		
+		
+
 	   }
 	   
 	   function showError(error) {

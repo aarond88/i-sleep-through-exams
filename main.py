@@ -8,6 +8,9 @@ import json
 import sys
 import MySQLdb
 from datetime import datetime
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 #from flask import Flask
 #import psycopg2.pool
 
@@ -15,6 +18,7 @@ CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 CLOUDSQL_DATABASE_NAME = os.environ.get('CLOUDSQL_DATABASE_NAME')
+
 
 def connect_to_cloudsql():
     if True:
@@ -34,18 +38,21 @@ def connect_to_cloudsql():
     return db
 
 def executeQuery(query):
+	with open('citylist1') as f:
+	    allData = json.load(f)
 	db = connect_to_cloudsql()
 	try:
 		cursor = db.cursor()
-		cursor.execute(query)
-		db.commit()
+		for data in allData:
+			cursor.execute("insert ignore into countrycodes (country) values (\'" + data + "\');")
+			db.commit()
 		global response 
 		response = cursor.fetchall()
 		return response 
 	except Exception as e:
 		global error_message 
 		error_message = sys.exc_info()
-	return ""
+	return error_message
 
 def format_to_json(data_stream):
   # NB. Dates don't do well in Python JSON.
@@ -79,8 +86,9 @@ class MainPageHandler(webapp.RequestHandler):
     #addAttendee(None)
     #addDonation(None)
     #eventDetails = getEventDetails()
+    response = executeQuery(None)
 
-    template_values = {'title': 'Strong Feather Events', 'errormessage': ''}
+    template_values = {'title': 'Strong Feather Events', 'errormessage': response}
     template = JINJA_ENVIRONMENT.get_template('index.html')
 
     self.response.write(template.render(template_values))
@@ -96,8 +104,8 @@ class CreatePageHandler(webapp.RequestHandler):
 
 class EventAPIHandler(webapp.RequestHandler):
   def get(self):
-    events = get_data('events')
-    self.response.write(events)
+    #events = get_data('events')
+    self.response.write([])
   def post(self):
     payload = self.request
     data = payload.body
