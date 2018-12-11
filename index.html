@@ -61,20 +61,22 @@
     <div ng-view></div>
 
 
-	<h2 style="text-align: center;">&nbsp;</h2>
-	<h2 style="text-align: center;">&nbsp;</h2>
-	<h2 id="weather-title" style="text-align: center;">Current weather in &lt;New Haven&gt;, US</h2>
+	<h4 style="text-align: center;">&nbsp;</h4>
+	<h2 id="error-message" style="text-align: center;"></h2>
+	<h2 style="text-align: center;" id="mapholder"><img src="/public/assets/blank.png" alt="" width="500" height="200"/></h2>
+	<h4 style="text-align: center;">&nbsp;</h4>
+	<h2 id="weather-title" style="text-align: center;">Current weather in New Haven, US</h2>
 	<table style="height: 177px; margin-left: auto; margin-right: auto;" width="446">
 	   <tbody>
 	      <tr style="height: 7.85001px;">
 	         <td style="width: 213.6px; height: 7.85001px;">
-	            <h1><span id="main-temp" style="color: #333333;">25* F</span></h1>
-	            <p><strong><span id="weather-desc" temp" style="color: #333333;">Clear</span></strong></p>
+	            <h1><span id="main-temp" style="color: #333333;"></span></h1>
+	            <p><strong><span id="weather-desc" temp" style="color: #333333;"></span></strong></p>
 	         </td>
 	         <td style="width: 217.6px; height: 7.85001px;">
-	            <p><strong><span id="main-max-min" style="color: #333333;">High-Low: 27*-21* F&nbsp;</span></strong></p>
-	            <p><strong><span id="main-humidity" style="color: #333333;">Humidity: 50%</span></strong></p>
-	            <p><strong><span id="wind-speed" style="color: #333333;">Wind: 5mph</span></strong></p>
+	            <p><strong><span id="main-max-min" style="color: #333333;">High-Low: </span></strong></p>
+	            <p><strong><span id="main-humidity" style="color: #333333;">Humidity: </span></strong></p>
+	            <p><strong><span id="wind-speed" style="color: #333333;">Wind: </span></strong></p>
 	         </td>
 	      </tr>
 	   </tbody>
@@ -86,34 +88,66 @@
 
 	<script>
 	   var x = document.getElementById("demo");
+	   var errorMessage = document.getElementById("error-message");
 	   var weatherTitle = document.getElementById("weather-title");
 	   var mainTemp = document.getElementById("main-temp");
 	   var weatherDesc = document.getElementById("weather-desc");
 	   var MainMaxMin = document.getElementById("main-max-min");
 	   var mainHumidity = document.getElementById("main-humidity");
 	   var windSpeed = document.getElementById("wind-speed");
+	   var mapHolder = document.getElementById("mapholder");
 	   
 	   function getLocation() {
 	     if (navigator.geolocation) {
-	       navigator.geolocation.getCurrentPosition(showPosition);
+	       navigator.geolocation.getCurrentPosition(showPosition, showError);
 	     } else { 
 	       x.innerHTML = "Geolocation is not supported by this browser.";
 	     }
 	   }
 	   
 	   function showPosition(position) {
-	     $.getJSON("https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0", function(result){
+	   	var jsonURL = "";
+	   	if (position === null || position == undefined){
+	   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.308151&lon=-72.928162&appid=edd1482d5f76f72226714348ab519fc0";
+	   	} else {
+	   		jsonURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0";
+	   	}
+	     $.getJSON(jsonURL, function(result){
             x.innerHTML = result + " " + position.coords.latitude;
-        	weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
+            weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
         	mainTemp.innerHTML = Math.round((result['main']['temp'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
         	weatherDesc.innerHTML = result['weather']['0']['description'];
         	MainMaxMin.innerHTML = "High-Low: " + Math.round((result['main']['temp_max'] - 273.15) * 9/5 + 32).toString() + "&#176;-" + Math.round((result['main']['temp_min'] - 273.15) * 9/5 + 32).toString() + "&#176; F";
         	mainHumidity.innerHTML = "Humidity: " + result['main']['humidity'].toString() + " %";
         	windSpeed.innerHTML =  "Wind: " + Math.round(result['wind']['speed']* 2.237).toString() + " mph";
+        	
+        	var latlon = position.coords.latitude + "," + position.coords.longitude;
+        	  var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&markers=color:blue%7Clabel:o%7C"+latlon+"&zoom=12&size=500x200&sensor=false&key=AIzaSyBE_-cYkgzx8mjZwqDszgYRqHpXP9OTDM4";
+
+  			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='200'>";
+        	
         });	     
 	     //x.innerHTML = "Latitude: " + position.coords.latitude + 
 	     //"<br>Longitude: " + position.coords.longitude;
 	   }
+	   
+	   function showError(error) {
+		  switch(error.code) {
+		    case error.PERMISSION_DENIED:
+		      errorMessage.innerHTML = "User denied the request for Geolocation. Showing info for default location.";
+		      break;
+		    case error.POSITION_UNAVAILABLE:
+		      errorMessage.innerHTML = "Location information is unavailable. Showing info for default location.";
+		      break;
+		    case error.TIMEOUT:
+		      errorMessage.innerHTML = "The request to get user location timed out. Showing info for default location.";
+		      break;
+		    case error.UNKNOWN_ERROR:
+		      errorMessage.innerHTML = "An unknown error occurred. Showing info for default location.";
+		      break;
+  			}	
+   		}
+
 	   
 	   window.onload = function() {
 	     getLocation();
