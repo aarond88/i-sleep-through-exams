@@ -63,18 +63,18 @@
 
 	<h2 style="text-align: center;">&nbsp;</h2>
 	<h2 style="text-align: center;">&nbsp;</h2>
-	<h2 style="text-align: center;">Current weather in &lt;New Haven&gt;, US</h2>
+	<h2 id="weather-title" style="text-align: center;">Current weather in &lt;New Haven&gt;, US</h2>
 	<table style="height: 177px; margin-left: auto; margin-right: auto;" width="446">
 	   <tbody>
 	      <tr style="height: 7.85001px;">
 	         <td style="width: 213.6px; height: 7.85001px;">
-	            <h1><span style="color: #333333;">25* F</span></h1>
-	            <p><span style="color: #333333;">Clear</span></p>
+	            <h1><span id="main-temp" style="color: #333333;">25* F</span></h1>
+	            <p><span id="weather-desc" temp" style="color: #333333;">Clear</span></p>
 	         </td>
 	         <td style="width: 217.6px; height: 7.85001px;">
-	            <p><span style="color: #333333;">High-Low : 27*-21* F&nbsp;</span></p>
-	            <p><span style="color: #333333;">Humidity: 50%</span></p>
-	            <p><span style="color: #333333;">Wind: 5mph</span></p>
+	            <p><span id="main-max-min" style="color: #333333;">High-Low : 27*-21* F&nbsp;</span></p>
+	            <p><span id="main-humidity" style="color: #333333;">Humidity: 50%</span></p>
+	            <p><span id="wind-speed" style="color: #333333;">Wind: 5mph</span></p>
 	         </td>
 	      </tr>
 	   </tbody>
@@ -82,9 +82,16 @@
 
   </body>
   
-  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 	<script>
 	   var x = document.getElementById("demo");
+	   var weatherTitle = document.getElementById("weather-title");
+	   var mainTemp = document.getElementById("main-temp");
+	   var weatherDesc = document.getElementById("weather-desc");
+	   var MainMaxMin = document.getElementById("main-max-min");
+	   var mainHumidity = document.getElementById("main-humidity");
+	   var windSpeed = document.getElementById("wind-speed");
 	   
 	   function getLocation() {
 	     if (navigator.geolocation) {
@@ -95,8 +102,18 @@
 	   }
 	   
 	   function showPosition(position) {
-	     x.innerHTML = "Latitude: " + position.coords.latitude + 
-	     "<br>Longitude: " + position.coords.longitude;
+	     $.getJSON("https://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&appid=edd1482d5f76f72226714348ab519fc0", function(result){
+            x.innerHTML = result + " " + position.coords.latitude;
+        	weatherTitle.innerHTML = "Current weather in " + result['name'] + ", " + result['sys']['country'];
+        	mainTemp.innerHTML = Math.round(((result['main']['temp'] - 273.15) * 9/5 + 32)).toString() + "&#176; F"
+        	weatherDesc.innerHTML = "";
+        	MainMaxMin.innerHTML = "";
+        	mainHumidity.innerHTML = "";
+        	windSpeed.innerHTML = "";
+        	
+        });	     
+	     //x.innerHTML = "Latitude: " + position.coords.latitude + 
+	     //"<br>Longitude: " + position.coords.longitude;
 	   }
 	   
 	   window.onload = function() {
