@@ -38,14 +38,11 @@ def connect_to_cloudsql():
     return db
 
 def executeQuery(query):
-	with open('citylist1') as f:
-	    allData = json.load(f)
 	db = connect_to_cloudsql()
 	try:
 		cursor = db.cursor()
-		for data in allData:
-			cursor.execute("insert ignore into countrycodes (country) values (\'" + data + "\');")
-			db.commit()
+		cursor.execute(query)
+		db.commit()
 		global response 
 		response = cursor.fetchall()
 		return response 
@@ -86,9 +83,9 @@ class MainPageHandler(webapp.RequestHandler):
     #addAttendee(None)
     #addDonation(None)
     #eventDetails = getEventDetails()
-    response = executeQuery(None)
-
-    template_values = {'title': 'Strong Feather Events', 'errormessage': response}
+    countrydata = getCountryData()
+    
+    template_values = {'title': 'Strong Feather Events', 'errormessage': '', 'countrydata': countrydata}
     template = JINJA_ENVIRONMENT.get_template('index.html')
 
     self.response.write(template.render(template_values))
@@ -149,26 +146,9 @@ app = webapp.WSGIApplication(
 
 
 # Get all event details
-def getEventDetails():
-	allevents = executeQuery("SELECT eventid, eventname, eventtime, imagelink, location, duration FROM events;") 
-	attendees = executeQuery("SELECT eventid, useremail from attendees WHERE eventid IN (SELECT eventid FROM events) AND status = \"Yes\";")
-	#allevents = executeQuery("SELECT e.*, (SELECT GROUP_CONCAT(a.useremail SEPARATOR ', ') FROM attendees a WHERE a.eventid = e.eventid) AS attending FROM events e;")
-	eventsCopy = list()
-	for event in allevents:
-		newEvent = {}
-		newEvent['id'] = event[0]
-		newEvent['title'] = event[1]
-		newEvent['date'] = event[2]
-		newEvent['imageURL'] = event[3]
-		newEvent['location'] = event[4]
-		newEvent['attending'] = []
-		eventsCopy.append(newEvent)
-	for attendee in attendees:
-		for newEvent in eventsCopy:
-			if attendee[0] == newEvent["id"]:
-				newEvent["attending"].append(attendee[1])
-				break
-	return eventsCopy
+def getCountryData():
+	allCountries = executeQuery("SELECT country, countryname FROM countrycodes ORDER BY countryname ASC;") 
+	return allCountries
 
 # Create new event
 def createEvent(eventObject):

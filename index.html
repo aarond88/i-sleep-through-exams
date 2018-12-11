@@ -47,10 +47,12 @@
     <md-toolbar class="md-tall">
       <div layout="row" layout-align="begin end">
         <img src="/public/assets/logo.png" class="logo" id="logo" />
-        <h2 style="vertical-align:middle">Weather status</h2>
+        <div style="vertical-align:middle; height: 65px; margin-left:10px">
+      		<h2 style="vertical-align:middle">Weather status</h2>
+      	</div>
       </div>
       <div>
-        <p>{{errormessage}}</p>
+        <p>{{error_message}}</p>
         <!--<p id="demo">Test text</p>-->
       </div>
     </md-toolbar>
@@ -61,12 +63,10 @@
     <div ng-view></div>
 
 
-	<h4 style="text-align: center;">&nbsp;</h4>
 	<h2 id="error-message" style="text-align: center;"></h2>
-	<h2 style="text-align: center;" id="mapholder"><img src="/public/assets/blank.png" alt="" width="500" height="200"/></h2>
-	<h4 style="text-align: center;">&nbsp;</h4>
+	<h2 style="text-align: center;" id="mapholder"><img src="/public/assets/blank.png" alt="" width="500" height="150"/></h2>
 	<h2 id="weather-title" style="text-align: center;">Current weather in New Haven, US</h2>
-	<table style="height: 177px; margin-left: auto; margin-right: auto;" width="446">
+	<table style="height: 140px; margin-left: auto; margin-right: auto;" width="450">
 	   <tbody>
 	      <tr style="height: 7.85001px;">
 	         <td style="width: 213.6px; height: 7.85001px;">
@@ -81,8 +81,41 @@
 	      </tr>
 	   </tbody>
 	</table>
-	<p style="text-align: center;">Need weather status for another location?</p>
+	<p style="text-align: center;">--------------------------------------------</p>
+	<h4 style="text-align: center;">Need weather status for another location?</h4>
 
+	<table style="height: 100px; margin-left: auto; margin-top: 20px; margin-right: auto;" width="460">
+	   <tbody>
+	      <tr>
+	         <td style="width: 150px; text-align: left;">Country: </td>
+	         <td style="width: 350px; text-align: left;">
+				<select id="country" style="padding-left: 3px">
+				  {% for country in countrydata %}
+				  	{% if country[0] == 'US' %}
+				  		<option selected="selected" value="{{country[0]}}">{{country[1]}}</option>
+				  	{% else %}
+					  	<option value="{{country[0]}}">{{country[1]}}</option>
+            		{% endif %}
+				  {% endfor %}
+				</select>	
+			</td>
+	         
+	      </tr>
+	      <tr>
+	         <td style="width: 150px; text-align: left;">Zip Code: </td>
+	         <td style="width: 350px;">
+	         	<input id="zip-code" type="number " placeholder="06511" autofocus size="7" style="padding-left: 5px">
+	         	<a href="https://worldpostalcode.com/search/" style="margin-left: 15px">Don't know the ZIP code?</a>
+	         </td>
+	      </tr>
+	      <tr>
+	         <td style="width: 150px; text-align: left;">&nbsp;</td>
+	         <td style="width: 350px;">
+	         	<button id="check-weather" type="button">Check weather</button>
+	         </td>
+	      </tr>
+	   </tbody>
+	</table>
 
   </body>
   
@@ -124,15 +157,12 @@
         	windSpeed.innerHTML =  "Wind: " + Math.round(result['wind']['speed']* 2.237).toString() + " mph";
         	
         	var latlon = position.coords.latitude + "," + position.coords.longitude;
-        	  var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&markers=color:blue%7Clabel:o%7C"+latlon+"&zoom=12&size=500x200&sensor=false&key=AIzaSyBE_-cYkgzx8mjZwqDszgYRqHpXP9OTDM4";
+        	  var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&markers=color:blue%7Clabel:o%7C"+latlon+"&zoom=12&size=500x150&sensor=false&key=AIzaSyBE_-cYkgzx8mjZwqDszgYRqHpXP9OTDM4";
 
-  			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='200'>";
+  			mapHolder.innerHTML = "<img src='"+img_url+"'alt='' width='500' height='150'>";
         	
-        });	     
-		
-		
-
-	   }
+        	});	     
+		}
 	   
 	   function showError(error) {
 		  switch(error.code) {
